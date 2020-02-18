@@ -38,11 +38,25 @@
 
 class Expression:
 
-    def __init__(self, operation=None, left=None, right=None, parent=None):
+    # def __init__(self):
+    # self.left = left
+    # self.operation = operation
+    # self.right = right
+
+    def __init__(self):
         self.operation = None
-        self.left = left
+        self.left = None
         self.right = None
-        self.parent = None
+
+    # def evaluate(self):
+    #     if self.operation == '+':
+    #         return self.left + self.right
+    #     if self.operation == '-':
+    #         return self.left - self.right
+    #     if self.operation == '*':
+    #         return self.left * self.right
+    #     if self.operation == '/':
+    #         return self.left / self.right
 
 
 def evaluate(e: Expression) -> float:
@@ -59,64 +73,40 @@ def evaluate(e: Expression) -> float:
         return evaluate(e.left) / evaluate(e.right)
 
 
-def root_of_expression(expression: Expression) -> Expression:
-    if expression.parent is None:
-        return expression
-    parent: Expression = expression.parent
-    while parent.parent is not None:
-        parent = parent.parent
-    return parent
-
-
-def symbol_to_expression(symbol: str) -> Expression:
-    symbol_expression = Expression()
-    symbol_expression.left = symbol
-
-    return symbol_expression
-
-
-def has_higher_order(first: str, second: str) -> bool:
-    return first in ['*', '/'] and second in ['+', '-']
-
-
 def calculate(expression_as_string: str) -> float:
     operations = ['+', '-', '*', '/']
     symbol = ''
-    current_expression: Expression = None
+    current_expression = None
     for c in expression_as_string:
         if c in operations:
-            symbol_expression = symbol_to_expression(symbol)
-            symbol = ''
-
             if current_expression is None:
+                symbol_expression = Expression()
+                symbol_expression.left = symbol
+                symbol = ''
+
                 current_expression = Expression()
                 current_expression.left = symbol_expression
 
                 current_expression.operation = c
             else:
-                new_expression: Expression = Expression()
+                symbol_expression = Expression()
+                symbol_expression.left = symbol
+                symbol = ''
+
+                current_expression.right = symbol_expression
+                new_expression = Expression()
+                new_expression.left = current_expression
                 new_expression.operation = c
 
-                if has_higher_order(current_expression.operation, c):
-                    current_expression.right = symbol_expression
-                    new_expression.left = current_expression
-                    #
-                    current_expression.parent.right = new_expression
-                    new_expression.parent = current_expression.parent
-                    current_expression.parent = new_expression
-                else:
-                    new_expression.left = symbol_expression
-                    new_expression.parent = current_expression
-                    current_expression.right = new_expression
                 current_expression = new_expression
         else:
             symbol = symbol + c
     if current_expression is None:
         return 0
 
-    symbol_expression = symbol_to_expression(symbol)
+    symbol_expression = Expression()
+    symbol_expression.left = symbol
+
     current_expression.right = symbol_expression
 
-    root = root_of_expression(current_expression)
-
-    return evaluate(root)
+    return evaluate(current_expression)

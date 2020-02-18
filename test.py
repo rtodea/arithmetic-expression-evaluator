@@ -6,13 +6,13 @@ from problem import calculate, Expression, evaluate
 class ProblemTestCase(unittest.TestCase):
 
     def test_expression_element(self):
-        expression: Expression = Expression()
-        expression.right = Expression(None, '10')
+        expression = Expression
+        expression.right = 10
         expression.operation = '+'
-        expression.left = Expression(None, '10')
-
+        expression.left = 10
         answer = evaluate(expression)
         self.assertEqual(20, answer)
+        # self.assertEqual(10, expression.evaluate())
 
     def test_simple_expression(self):
         self.assertEqual(20, calculate('10+10'))
@@ -31,9 +31,6 @@ class ProblemTestCase(unittest.TestCase):
 
     def test_multiple_expression_with_precedence(self):
         self.assertEqual(30, calculate('10+10*2'))
-
-    def test_multiple_expression_with_two_precedence(self):
-        self.assertEqual(35, calculate('10+10*2+5'))
 
 
 if __name__ == '__main__':
